@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1775567277659,
+    "title": "Mano pirma uzduotis",
+    "status": "done",
+    "due_date": "2026-05-01",
+    "email": "tavo@gmail.com",
+    "reminder_sent": false
+  },
+  {
+    "id": 1775570338357,
+    "title": "Antra uzduotis",
+    "status": "pending",
+    "due_date": "2026-05-02",
+    "email": "tavo@gmail.com",
+    "reminder_sent": false
+  },
+  {
+    "id": 1,
+    "title": "Mano uzduotis",
+    "status": "pending",
+    "due_date": "2026-05-01",
+    "email": "tavo@gmail.com",
+    "reminder_sent": false
+  },
+  {
+    "id": 1775573171725,
+    "title": "Laboratorinis darbas",
+    "status": "pending",
+    "due_date": "2026-04-10",
+    "email": "tavo@gmail.com",
+    "reminder_sent": true
+  },
+  {
+    "id": 1775574337655,
+    "title": "Laboratorinis darbas",
+    "status": "pending",
+    "due_date": "2026-04-10",
+    "email": "tavoss@gmail.com",
+    "reminder_sent": true
+  }
+]
