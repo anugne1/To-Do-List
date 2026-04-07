@@ -5,8 +5,7 @@
     "status": "done",
     "due_date": "2026-05-01",
     "email": "tavo@gmail.com",
-    "reminder_sent": false,
-    "preview_url": null
+    "reminder_sent": false
   },
   {
     "id": 1,
