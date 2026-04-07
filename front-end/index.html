@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To-Do sistema</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <h1>To-Do sistema</h1>
+      <p>Užduočių valdymas su el. pašto priminimais</p>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <h2>Nauja užduotis</h2>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="title">Pavadinimas</label>
+            <input type="text" id="title" placeholder="Pvz. Laboratorinis darbas" />
+          </div>
+
+          <div class="field">
+            <label for="due_date">Termino data</label>
+            <input type="date" id="due_date" />
+          </div>
+
+          <div class="field field-full">
+            <label for="email">El. paštas priminimui</label>
+            <input type="email" id="email" placeholder="Pvz. vardas@gmail.com" />
+          </div>
+        </div>
+
+        <div class="actions-row">
+          <button id="addBtn" class="btn primary">Pridėti užduotį</button>
+        </div>
+
+        <p id="message" class="message"></p>
+      </section>
+
+      <section class="card">
+        <h2>Filtravimas</h2>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="statusFilter">Statusas</label>
+            <select id="statusFilter">
+              <option value="">Visos</option>
+              <option value="pending">Pending</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="dateFilter">Data</label>
+            <input type="date" id="dateFilter" />
+          </div>
+        </div>
+
+        <div class="actions-row">
+          <button id="filterBtn" class="btn">Filtruoti</button>
+          <button id="resetBtn" class="btn secondary">Išvalyti filtrus</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="list-header">
+          <h2>Užduočių sąrašas</h2>
+          <button id="refreshBtn" class="btn secondary">Atnaujinti</button>
+        </div>
+
+        <div id="taskList" class="task-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>

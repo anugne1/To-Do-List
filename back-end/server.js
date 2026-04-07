@@ -142,10 +142,10 @@ async function checkAndSendReminders() {
     if (diffDays <= 3 && diffDays > 0) {
       try {
         const info = await transporter.sendMail({
-          from: '"ToDo App" <todo@test.com>',
-          to: task.email,
-          subject: "Priminimas apie artėjančią užduotį",
-          text: `Sveiki! Primename, kad užduotis "${task.title}" turi terminą ${task.due_date}.`
+        from: '"ToDo App" <todo@test.com>',
+        to: task.email,
+        subject: "Priminimas apie artėjančią užduotį",
+        text: `Sveiki! Primename, kad užduotis "${task.title}" turi terminą ${task.due_date}.`
         });
 
         console.log(`Priminimas išsiųstas užduočiai: ${task.title}`);
