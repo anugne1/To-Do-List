@@ -1,9 +1,11 @@
-const API = "http://localhost:3001/tasks";
+const API = "https://localhost:3001/tasks";
 
 const titleInput = document.getElementById("title");
 const dateInput = document.getElementById("due_date");
 const emailInput = document.getElementById("email");
 const addBtn = document.getElementById("addBtn");
+const cancelEditBtn = document.getElementById("cancelEditBtn");
+const formTitle = document.getElementById("formTitle");
 const messageEl = document.getElementById("message");
 
 const statusFilter = document.getElementById("statusFilter");
@@ -13,8 +15,11 @@ const resetBtn = document.getElementById("resetBtn");
 const refreshBtn = document.getElementById("refreshBtn");
 
 const taskList = document.getElementById("taskList");
+let editingId = null;
+let tasksCache = []; //laikysim uzduociu sarasa atmintyje, kad nereiktu visada kreiptis i serveri
 
-addBtn.addEventListener("click", addTask);
+addBtn.addEventListener("click", saveTask);
+cancelEditBtn.addEventListener("click", cancelEdit);
 filterBtn.addEventListener("click", applyFilters);
 resetBtn.addEventListener("click", resetFilters);
 refreshBtn.addEventListener("click", () => loadTasks());
@@ -31,12 +36,14 @@ async function loadTasks(filters = {}) {
       params.append("due_date", filters.due_date);
     }
 
-    const url = params.toString() ? `${API}?${params.toString()}` : API;
+    const url = params.toString() ? `${API}?${params.toString()}` : API; 
+    //jei yra filtru tai pridedam juos prie url, jei ne tai paliekam api be filtru
 
-    const res = await fetch(url);
-    const tasks = await res.json();
+    const res = await fetch(url); 
+    const tasks = await res.json(); //gaunam uzduociu sarasa is serverio
 
-    renderTasks(tasks);
+    tasksCache = tasks; 
+    renderTasks(tasks); //atvaizduojam uzduotis
   } catch (error) {
     showMessage("Nepavyko užkrauti užduočių.", true);
   }
@@ -52,7 +59,7 @@ function renderTasks(tasks) {
 
   tasks.forEach(task => {
     const div = document.createElement("div");
-    div.className = `task-item ${task.status === "done" ? "done" : ""}`;
+    div.className = `task-item ${task.status === "done" ? "done" : ""}`; //jei done tai kitaip atvaizduosim
 
     div.innerHTML = `
     <h3 class="task-title">${task.title}</h3>
@@ -65,16 +72,17 @@ function renderTasks(tasks) {
     <p class="task-meta"><strong>Reminder sent:</strong> ${task.reminder_sent ? "Taip" : "Ne"}</p>
 
     <div class="task-actions">
+        <button class="btn" onclick="startEdit(${task.id})">Redaguoti</button>
         <button class="btn primary" onclick="markDone(${task.id})">Pažymėti Done</button>
         <button class="btn secondary" onclick="deleteTask(${task.id})">Ištrinti</button>
-    </div>
-    `;
+    </div> 
+    `; //sukuriam html koda kiekvienai uzduociai ir pridedam mygtukus redaguoti, pazymeti kaip done ir istrinti
 
     taskList.appendChild(div);
   });
 }
 
-async function addTask() {
+async function saveTask() {
   const title = titleInput.value.trim();
   const due_date = dateInput.value;
   const email = emailInput.value.trim();
@@ -84,68 +92,104 @@ async function addTask() {
     return;
   }
 
-  const body = {
-    title,
-    due_date,
-    email
-  };
-
   try {
-    const res = await fetch(API, {
-      method: "POST",
+    const payload = { title, due_date, email };
+    const res = await fetch(editingId ? `${API}/${editingId}` : API, {
+      method: editingId ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(body)
-    });
+      body: JSON.stringify(payload)
+    }); //jei editingId yra tai atnaujinam esama uzduoti, jei ne tai kuriam nauja
 
-    const data = await res.json();
+    const data = await res.json(); // ats
 
     if (!res.ok) {
-      showMessage(data.error || "Nepavyko sukurti užduoties.", true);
+      const errorText = Array.isArray(data.details)
+        ? data.details.join("\n")
+        : data.error;
+      const fallback = editingId
+        ? "Nepavyko atnaujinti užduoties."
+        : "Nepavyko sukurti užduoties.";
+      showMessage(errorText || fallback, true);
       return;
-    }
+    } 
 
     titleInput.value = "";
     dateInput.value = "";
     emailInput.value = "";
 
-    showMessage("Užduotis sėkmingai pridėta.");
-    loadTasks();
+    if (editingId) {
+      showMessage("Užduotis atnaujinta.");
+      cancelEdit();
+      applyFilters();
+    } else {
+      showMessage("Užduotis sėkmingai pridėta.");
+      loadTasks();
+    }
   } catch (error) {
-    showMessage("Serverio klaida kuriant užduotį.", true);
+    const fallback = editingId
+      ? "Serverio klaida atnaujinant užduotį."
+      : "Serverio klaida kuriant užduotį.";
+    showMessage(fallback, true);
   }
 }
 
+function startEdit(id) {
+  const task = tasksCache.find(item => item.id == id);
+  if (!task) {
+    showMessage("Nepavyko rasti užduoties.", true);
+    return;
+  }
+
+  editingId = task.id;
+  titleInput.value = task.title || "";
+  dateInput.value = task.due_date || "";
+  emailInput.value = task.email || "";
+  formTitle.textContent = "Redaguoti užduotį";
+  addBtn.textContent = "Išsaugoti pakeitimus";
+  cancelEditBtn.classList.remove("hidden");
+} //uzpildom forma su esamos uzduoties duomenimis, kad galetum redaguoti ir issaugoti pakeitimus
+
+function cancelEdit() {
+  editingId = null;
+  titleInput.value = "";
+  dateInput.value = "";
+  emailInput.value = "";
+  formTitle.textContent = "Nauja užduotis";
+  addBtn.textContent = "Pridėti užduotį";
+  cancelEditBtn.classList.add("hidden");
+} //isvalom forma ir grazinam i pradini stiliu
+
 async function markDone(id) {
   try {
-    const res = await fetch(`http://localhost:3001/tasks/${id}/status`, {
+    const res = await fetch(`${API}/${id}/status`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ status: "done" })
-    });
+    }); //siunciam patch uzklausa, kad pakeistum statusa i done
 
     const data = await res.json();
 
     if (!res.ok) {
-      showMessage(data.error || "Nepavyko pakeisti statuso.", true);
+      showMessage(data.error || "Nepavyko pakeisti statuso.", true); 
       return;
     }
 
     showMessage("Statusas pakeistas į done.");
     applyFilters();
   } catch (error) {
-    showMessage("Serverio klaida keičiant statusą.", true);
+    showMessage("Serverio klaida keičiant statusą.", true); 
   }
 }
 
 async function deleteTask(id) {
   try {
-    const res = await fetch(`http://localhost:3001/tasks/${id}`, {
+    const res = await fetch(`${API}/${id}`, {
       method: "DELETE"
-    });
+    }); //siunciam delete uzklausa, kad istrintum uzduoti
 
     const data = await res.json();
 
@@ -165,7 +209,7 @@ function applyFilters() {
   const filters = {
     status: statusFilter.value,
     due_date: dateFilter.value
-  };
+  }; //gaunam filtru reiksmes is inputu
 
   loadTasks(filters);
 }

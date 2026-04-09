@@ -8,17 +8,9 @@
     "reminder_sent": false
   },
   {
-    "id": 1,
-    "title": "Mano uzduotis",
-    "status": "pending",
-    "due_date": "2026-05-01",
-    "email": "tavo@gmail.com",
-    "reminder_sent": false
-  },
-  {
     "id": 1775574337655,
     "title": "Laboratorinis darbas",
-    "status": "pending",
+    "status": "done",
     "due_date": "2026-04-10",
     "email": "tavoss@gmail.com",
     "reminder_sent": true
@@ -29,6 +21,14 @@
     "status": "done",
     "due_date": "2026-04-15",
     "email": "testukastu@gmail.com",
+    "reminder_sent": false
+  },
+  {
+    "id": 1775763761588,
+    "title": "Pavedžioti šunį",
+    "status": "pending",
+    "due_date": "",
+    "email": "",
     "reminder_sent": false
   }
 ]

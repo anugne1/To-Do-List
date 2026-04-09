@@ -120,6 +120,10 @@ select:focus {
   color: white;
 }
 
+.hidden {
+  display: none;
+}
+
 .message {
   margin-top: 12px;
   min-height: 20px;
@@ -154,6 +158,8 @@ select:focus {
 .task-title {
   margin: 0 0 10px;
   font-size: 20px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .task-meta {
@@ -191,7 +197,44 @@ select:focus {
   color: #64748b;
 }
 
-@media (max-width: 700px) {
+@media (min-width: 901px) {
+  .container {
+    max-width: 1100px;
+    margin: 32px auto;
+    gap: 24px;
+  }
+
+  .card {
+    padding: 24px;
+  }
+
+  .topbar h1 {
+    font-size: 34px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  .container {
+    max-width: 860px;
+    margin: 24px auto;
+    padding: 0 20px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .topbar h1 {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    margin: 16px auto;
+    padding: 0 14px;
+  }
+
   .form-grid {
     grid-template-columns: 1fr;
   }
@@ -200,8 +243,16 @@ select:focus {
     grid-column: auto;
   }
 
+  .topbar {
+    padding: 20px 14px;
+  }
+
   .topbar h1 {
-    font-size: 26px;
+    font-size: 24px;
+  }
+
+  .card {
+    padding: 16px;
   }
 
   .list-header {
